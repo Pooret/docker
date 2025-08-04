@@ -1,0 +1,39 @@
+services: # docker compose expects 
+  backend: # custom key name
+    ports:
+      - 8080:8000
+    #image: python:latest
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 # bind host to port (without host wont run)
+    environment:
+      - PORT=8000
+      - MY_PROJECT=My Project
+    env_file:
+      - .env.sample
+    volumes:
+      - ./backend/src:/app
+    develop:
+      watch:
+        - action: rebuild
+          path: backend/requirements.txt
+        - action: rebuild
+          path: backend/Dockerfile
+        - action: restart
+          path: backend/src/
+          #target: /app
+        - action: restart
+          path: backend/src/
+
+  static_html: # custom key name
+    ports:
+      - 8000:8000
+      - 3000:8000
+    #image: python:latest
+    build:
+      context: ./static_html
+      dockerfile: Dockerfile.static
+    command: python -m http.server 8000
+    volumes:
+      - ./static_html/src:/app

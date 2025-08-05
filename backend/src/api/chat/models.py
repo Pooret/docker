@@ -1,0 +1,31 @@
+# models.py
+from sqlmodel import SQLModel, Field, DateTime
+from datetime import datetime, timezone
+
+def get_utc_now():
+    return datetime.now().replace(tzinfo=timezone.utc)
+
+
+class ChatMessagePayload(SQLModel):
+    # pydantic model 
+    # validation
+    # serializer
+    message:str
+
+
+class ChatMessage(SQLModel, table=True):
+    # database table
+    # saving, updating, getting, deleting
+    # serializer
+    id: int | None = Field(default=None, primary_key=True)
+    message: str
+    created_at: datetime = Field(
+        default_factory =get_utc_now,
+        sa_type=DateTime(timezone=True), #sqlalchemy
+        primary_key = False,
+        nullable=False # No nullable fields allowed
+    )
+
+class ChatMessageListItem(SQLModel):
+    message:str
+    created_at: datetime = Field(default=None)

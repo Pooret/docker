@@ -10,7 +10,6 @@ RUN python -m venv /opt/venv
 ENV PATH=/opt/venv/bin:$PATH 
 
 WORKDIR /app
-
 #RUN mkdir -p /static_folder
 #COPY local_folder/file container_destination
 COPY requirements.txt /tmp/requirements.txt

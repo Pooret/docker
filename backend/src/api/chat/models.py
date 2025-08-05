@@ -27,5 +27,6 @@ class ChatMessage(SQLModel, table=True):
     )
 
 class ChatMessageListItem(SQLModel):
+    id: int | None = Field(default=None)
     message:str
     created_at: datetime = Field(default=None)

@@ -1,9 +1,10 @@
+# llms.py
 import os
 from langchain_openai import ChatOpenAI
 
 
-OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL")
-OPENAI_MODEL_NAME=os.environ.get("OPENAI_MODEL_NAME", "gpt-4o-mini")
+OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL") or None
+OPENAI_MODEL_NAME=os.environ.get("OPENAI_MODEL_NAME") or "gpt-4o-mini"
 OPENAI_API_KEY=os.environ.get("OPENAI_API_KEY")
 if not OPENAI_API_KEY:
     raise NotImplementedError("`OPENAI_KEY` is required")

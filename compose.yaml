@@ -1,4 +1,5 @@
 services: # docker compose expects 
+  #docker compose run backend /bin/bash
   backend: # custom key name
     ports:
       - 8080:8000
@@ -43,17 +44,18 @@ services: # docker compose expects
       interval: 5s
       timeout: 5s
       retries: 5
-  static_html: # custom key name
-    ports:
-      - 8000:8000
-      - 3000:8000
-    #image: python:latest
-    build:
-      context: ./static_html
-      dockerfile: Dockerfile.static
-    command: python -m http.server 8000
-    volumes:
-      - ./static_html/src:/app
+      
+  # static_html: # custom key name
+  #   ports:
+  #     - 8000:8000
+  #     - 3000:8000
+  #   #image: python:latest
+  #   build:
+  #     context: ./static_html
+  #     dockerfile: Dockerfile.static
+  #   command: python -m http.server 8000
+  #   volumes:
+  #     - ./static_html/src:/app
 
 volumes:
   dc_managed_db_volume:

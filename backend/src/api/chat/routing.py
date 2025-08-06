@@ -4,6 +4,8 @@ from fastapi import APIRouter, Depends
 from sqlmodel import Session, select
 from .models import ChatMessagePayload, ChatMessage, ChatMessageListItem
 from api.db import get_session
+from api.ai.services import generate_email_message
+from api.ai.schemas import EmailMessageSchema
 router = APIRouter()
 
 # api/chats/
@@ -21,9 +23,13 @@ def chat_list_messages(session: Session = Depends(get_session)):
     return results
 
 # HTTP POST -> payload = {"message": "Hello World"} -> {"message":"Hello World", "id":1}
-# curl -X POST -d '{"message": "Hello World"}' -H "Content-Type: application/json" http://localhost:8080/api/chats/
 # curl -request method POST -data "JSON data payload" -header "JSON Data" url_endpoint
-@router.post("/", response_model=ChatMessageListItem)
+# curl -X POST -d '{"message": "Hello World"}' -H "Content-Type: application/json" http://localhost:8080/api/chats/
+# curl -X POST -d '{"message": "Hello World"}' -H "Content-Type: application/json" https://oyster-app-n4ct3.ondigitalocean.app/api/chats/
+
+# curl -X POST -d '{"message": "Give me a summary as to why it is good to go outside."}' -H "Content-Type: application/json" http://localhost:8080/api/chats/
+
+@router.post("/", response_model=EmailMessageSchema)
 def chat_create_message(
     payload:ChatMessagePayload,
     session: Session = Depends(get_session) # need to initialize db session
@@ -33,6 +39,7 @@ def chat_create_message(
     obj = ChatMessage.model_validate(data)
     session.add(obj)
     session.commit()
-    session.refresh(obj) # ensure id/primary key is added to object instance
+    #session.refresh(obj) # ensure id/primary key is added to object instance
     # ready to store in the database
-    return obj
+    response = generate_email_message(payload.message)
+    return response

@@ -34,7 +34,7 @@ def get_research_agent():
     return agent
 
 # supe.invoke({"messages": [{"role":"user", "content": "Find out how to create a latte then email me the results."}]})
-def get_supervisor():
+def get_supervisor(checkpointer=None):
     llm = get_openai_llm()
     email_agent = get_email_agent()
     research_agent = get_research_agent()

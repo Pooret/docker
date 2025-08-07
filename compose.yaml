@@ -24,10 +24,10 @@ services: # docker compose expects
           path: backend/requirements.txt
         - action: rebuild
           path: backend/Dockerfile
-        - action: restart
+        - action: sync+restart
           path: backend/src/
           #target: /app
-        - action: restart
+        - action: sync+restart
           path: backend/src/
   # DATABASE_URL=postgresql+psycopg://username:password@dbhost:dbport/dbname
   # DATABASE_URL=postgresql+psycopg://dbuser:db-password@db_service:5432/mydb

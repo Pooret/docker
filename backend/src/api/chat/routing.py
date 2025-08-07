@@ -1,12 +1,16 @@
 # routing.py
 from typing import List
+import uuid
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
+from langgraph.checkoint.memory import InMemorySaver
 from .models import ChatMessagePayload, ChatMessage, ChatMessageListItem
 from api.ai.agents import get_supervisor
 from api.db import get_session
 from api.ai.services import generate_email_message
 from api.ai.schemas import EmailMessageSchema, SupervisorMessageSchema
+
+checkpointer = InMemorySaver()
 router = APIRouter()
 
 # api/chats/
@@ -40,7 +44,8 @@ def chat_create_message(
     obj = ChatMessage.model_validate(data)
     session.add(obj)
     session.commit()
-    supe = get_supervisor()
+    thread_id = uuid.uuid4()
+    supe = get_supervisor(checkpointer=checkpointer)
     msg_data = {
         "messages": [
             {"role":"user",
@@ -48,7 +53,7 @@ def chat_create_message(
             },
         ]
     }
-    result = supe.invoke(msg_data)
+    result = supe.invoke(msg_data, {"configurable":{"thread_id":thread_id}})
     if not result:
         raise HTTPException(status_code=400, detail="error with supervisor")
     messages = result.get("messages")
